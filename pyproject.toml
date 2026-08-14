@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flaxon-ai"
-version = "0.1.0"
+version = "0.1.1"
 description = "AI/LLM integration plugin for Flaxon framework with support for Gemini, OpenAI, and local Flax/JAX models"
 readme = "README.md"
 authors = [
