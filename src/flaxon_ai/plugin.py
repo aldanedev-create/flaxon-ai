@@ -4,7 +4,7 @@ import os
 from typing import Optional, Dict, Any, List
 
 from flaxon import Flaxon
-from flaxon.plugin import Plugin
+from flaxon.plugins import Plugin
 from flaxon.http import Request, Response
 
 from .client import AIClient
