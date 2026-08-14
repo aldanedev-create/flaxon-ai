@@ -4,7 +4,7 @@ import json
 from typing import Dict, Any
 
 from flaxon import Flaxon
-from flaxon.http import Request, Response
+from flaxon.http import Request, Response, JSONResponse
 from flaxon.exceptions import HTTPException
 
 from .streaming import StreamResponse
@@ -34,7 +34,7 @@ def register_routes(app: Flaxon, plugin) -> None:
         
         prompt = data.get("prompt")
         if not prompt:
-            return Response.json(
+            return JSONResponse(
                 {"error": "prompt is required"},
                 status=400
             )
@@ -53,13 +53,13 @@ def register_routes(app: Flaxon, plugin) -> None:
                 temperature=config.temperature,
             )
             
-            return Response.json({
+            return JSONResponse({
                 "success": True,
                 "text": result,
                 "config": config.to_dict(),
             })
         except Exception as e:
-            return Response.json({
+            return JSONResponse({
                 "success": False,
                 "error": str(e),
             }, status=500)
@@ -74,7 +74,7 @@ def register_routes(app: Flaxon, plugin) -> None:
         
         prompt = data.get("prompt")
         if not prompt:
-            return Response.json(
+            return JSONResponse(
                 {"error": "prompt is required"},
                 status=400
             )
@@ -109,7 +109,7 @@ def register_routes(app: Flaxon, plugin) -> None:
         
         messages = data.get("messages")
         if not messages:
-            return Response.json(
+            return JSONResponse(
                 {"error": "messages is required"},
                 status=400
             )
@@ -128,13 +128,13 @@ def register_routes(app: Flaxon, plugin) -> None:
                 temperature=config.temperature,
             )
             
-            return Response.json({
+            return JSONResponse({
                 "success": True,
                 "text": result,
                 "config": config.to_dict(),
             })
         except Exception as e:
-            return Response.json({
+            return JSONResponse({
                 "success": False,
                 "error": str(e),
             }, status=500)
@@ -149,7 +149,7 @@ def register_routes(app: Flaxon, plugin) -> None:
         
         text = data.get("text")
         if not text:
-            return Response.json(
+            return JSONResponse(
                 {"error": "text is required"},
                 status=400
             )
@@ -162,13 +162,13 @@ def register_routes(app: Flaxon, plugin) -> None:
                 model=model,
             )
             
-            return Response.json({
+            return JSONResponse({
                 "success": True,
                 "embedding": result,
                 "dimensions": len(result),
             })
         except Exception as e:
-            return Response.json({
+            return JSONResponse({
                 "success": False,
                 "error": str(e),
             }, status=500)
@@ -179,7 +179,7 @@ def register_routes(app: Flaxon, plugin) -> None:
         try:
             models = await plugin.list_models()
             
-            return Response.json({
+            return JSONResponse({
                 "success": True,
                 "models": models,
                 "count": len(models),
@@ -187,7 +187,7 @@ def register_routes(app: Flaxon, plugin) -> None:
                 "provider": plugin.provider,
             })
         except Exception as e:
-            return Response.json({
+            return JSONResponse({
                 "success": False,
                 "error": str(e),
             }, status=500)
@@ -197,7 +197,7 @@ def register_routes(app: Flaxon, plugin) -> None:
         """AI service health check."""
         status = await plugin.health_check()
         
-        return Response.json({
+        return JSONResponse({
             "success": True,
             **status,
             "version": plugin.version,

@@ -4,7 +4,7 @@ import json
 from functools import wraps
 from typing import Any, Callable, Optional
 
-from flaxon.http import Request, Response
+from flaxon.http import Request, Response, JSONResponse
 
 
 def ai_prompt(template: str, model: Optional[str] = None):
@@ -110,7 +110,7 @@ def stream_ai(model: Optional[str] = None, max_tokens: Optional[int] = None):
                 prompt = str(result)
             
             if not prompt:
-                return Response.json({"error": "No prompt provided"}, status=400)
+                return JSONResponse({"error": "No prompt provided"}, status=400)
             
             # Return streaming response
             from .streaming import StreamResponse

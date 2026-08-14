@@ -4,7 +4,7 @@ from .plugin import FlaxonAIPlugin
 from .client import AIClient
 from .providers.base import AIProvider
 from .decorators import ai_prompt, stream_ai, ai_route
-from .router import router
+from .router import register_routes
 from .types import (
     ProviderType,
     GenerationConfig,
@@ -21,7 +21,7 @@ __all__ = [
     "ai_prompt",
     "stream_ai",
     "ai_route",
-    "router",
+    "register_routes",
     "ProviderType",
     "GenerationConfig",
     "AIMessage",

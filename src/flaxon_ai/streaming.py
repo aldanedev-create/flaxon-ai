@@ -7,7 +7,7 @@ from typing import AsyncGenerator, Optional, Dict, Any
 from flaxon.http import Response
 
 
-class StreamResponse:
+class StreamResponse(Response):
     """
     Server-Sent Events streaming response.
     
@@ -31,23 +31,29 @@ class StreamResponse:
             generator: Async generator yielding text chunks
             metadata: Metadata to send as first event
         """
+        # Flaxon's dispatcher only recognizes endpoint return values that are
+        # actual Response instances (see Response.from_value) -- a bare ASGI
+        # callable falls through and gets silently mangled into a garbage
+        # JSONResponse of the object's repr instead of ever being called as
+        # an ASGI app. Subclassing Response makes this survive that check.
+        super().__init__(
+            content=b"",
+            headers={
+                "content-type": "text/event-stream",
+                "cache-control": "no-cache",
+                "connection": "keep-alive",
+                "x-accel-buffering": "no",
+            },
+        )
         self.generator = generator
         self.metadata = metadata or {}
     
     async def __call__(self, scope, receive, send):
         """ASGI callable for streaming response."""
-        # Send response headers
-        headers = [
-            (b"content-type", b"text/event-stream"),
-            (b"cache-control", b"no-cache"),
-            (b"connection", b"keep-alive"),
-            (b"x-accel-buffering", b"no"),
-        ]
-        
         await send({
             "type": "http.response.start",
-            "status": 200,
-            "headers": headers,
+            "status": self.status_code,
+            "headers": self.headers.to_asgi(),
         })
         
         # Send metadata if provided
